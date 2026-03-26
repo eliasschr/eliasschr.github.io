@@ -1,73 +1,94 @@
-// Project catalog: replace these placeholders with your real portfolio projects.
+// Project catalog -------------------------------------------------------------
+// Add, remove, or edit project objects in this array.
+// Keep each object shape consistent so the UI renders correctly.
 const projects = [
   {
     title: "Swift Study Planner",
     description:
       "A lightweight iOS app for scheduling study sessions and tracking weekly learning goals.",
     category: "iOS",
-    tech: ["Swift", "UIKit", "Core Data"],
+    techStack: ["Swift", "UIKit", "Core Data"],
     githubUrl: "https://github.com/yourusername/swift-study-planner",
-    demoUrl: "",
+    // liveUrl is optional. Remove it (or leave undefined) if no live version exists.
+    liveUrl: "",
+    // featured is optional. Set true to visually mark standout projects.
+    featured: true,
   },
   {
     title: "Broadcast Lab Dashboard",
     description:
       "A responsive web dashboard for monitoring studio equipment health and status updates.",
     category: "Web",
-    tech: ["HTML", "CSS", "JavaScript"],
+    techStack: ["HTML", "CSS", "JavaScript"],
     githubUrl: "https://github.com/yourusername/broadcast-lab-dashboard",
-    demoUrl: "https://example.com/demo-dashboard",
+    liveUrl: "https://example.com/demo-dashboard",
   },
   {
     title: "Campus Events API",
     description:
       "REST API prototype that provides structured metadata for campus media events and sessions.",
     category: "API",
-    tech: ["Node.js", "Express", "OpenAPI"],
+    techStack: ["Node.js", "Express", "OpenAPI"],
     githubUrl: "https://github.com/yourusername/campus-events-api",
-    demoUrl: "",
   },
   {
     title: "FFmpeg Batch Helper",
     description:
       "CLI utility to automate media transcoding workflows with reusable profile presets.",
     category: "Tools",
-    tech: ["Python", "FFmpeg", "CLI"],
+    techStack: ["Python", "FFmpeg", "CLI"],
     githubUrl: "https://github.com/yourusername/ffmpeg-batch-helper",
-    demoUrl: "",
   },
   {
     title: "Lecture Notes Hub",
     description:
       "A searchable web archive for course notes, references, and downloadable study material.",
     category: "Study",
-    tech: ["JavaScript", "Markdown", "GitHub Pages"],
+    techStack: ["JavaScript", "Markdown", "GitHub Pages"],
     githubUrl: "https://github.com/yourusername/lecture-notes-hub",
-    demoUrl: "https://example.com/notes-hub",
+    liveUrl: "https://example.com/notes-hub",
   },
   {
     title: "Portfolio Starter",
     description:
       "A minimal starter template for building portfolio websites with clean components.",
     category: "Web",
-    tech: ["HTML", "CSS", "JavaScript"],
+    techStack: ["HTML", "CSS", "JavaScript"],
     githubUrl: "https://github.com/yourusername/portfolio-starter",
-    demoUrl: "https://example.com/portfolio-starter",
+    liveUrl: "https://example.com/portfolio-starter",
+    featured: true,
   },
+
+  // Insert your own project objects here:
+  // {
+  //   title: "My Project",
+  //   description: "What it does and why it matters.",
+  //   category: "Web",
+  //   techStack: ["React", "TypeScript", "Node.js"],
+  //   githubUrl: "https://github.com/yourusername/my-project",
+  //   liveUrl: "https://my-project.example.com", // optional
+  //   featured: false, // optional
+  // },
 ];
 
-const categories = ["All", "iOS", "Web", "API", "Tools", "Study"];
-let activeCategory = "All";
+const ALL_CATEGORY_LABEL = "All";
+let activeCategory = ALL_CATEGORY_LABEL;
 
 const filterBar = document.getElementById("filterBar");
 const projectsGrid = document.getElementById("projectsGrid");
 
-function filteredProjects() {
-  if (activeCategory === "All") return projects;
-  return projects.filter((project) => project.category === activeCategory);
+function getCategories(projectList) {
+  const uniqueCategories = [...new Set(projectList.map((project) => project.category))];
+  return [ALL_CATEGORY_LABEL, ...uniqueCategories];
 }
 
-function createFilterButtons() {
+function getVisibleProjects(projectList, selectedCategory) {
+  if (selectedCategory === ALL_CATEGORY_LABEL) return projectList;
+  return projectList.filter((project) => project.category === selectedCategory);
+}
+
+function createFilterButtons(projectList) {
+  const categories = getCategories(projectList);
   filterBar.innerHTML = "";
 
   categories.forEach((category) => {
@@ -78,16 +99,46 @@ function createFilterButtons() {
 
     button.addEventListener("click", () => {
       activeCategory = category;
-      createFilterButtons();
-      renderProjects();
+      createFilterButtons(projectList);
+      renderProjects(projectList);
     });
 
     filterBar.appendChild(button);
   });
 }
 
-function renderProjects() {
-  const visibleProjects = filteredProjects();
+function createProjectCard(project) {
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const badges = project.techStack
+    .map((tech) => `<span class="badge">${tech}</span>`)
+    .join("");
+
+  // Only render Live Demo when a valid URL exists.
+  const liveButton = project.liveUrl
+    ? `<a class="btn" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">Live Demo</a>`
+    : "";
+
+  const featuredTag = project.featured
+    ? '<span class="badge" aria-label="Featured project">Featured</span>'
+    : "";
+
+  card.innerHTML = `
+    <h3>${project.title}</h3>
+    <p>${project.description}</p>
+    <div class="badges">${featuredTag}${badges}</div>
+    <div class="card-actions">
+      <a class="btn btn-primary" href="${project.githubUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>
+      ${liveButton}
+    </div>
+  `;
+
+  return card;
+}
+
+function renderProjects(projectList) {
+  const visibleProjects = getVisibleProjects(projectList, activeCategory);
   projectsGrid.innerHTML = "";
 
   if (visibleProjects.length === 0) {
@@ -97,28 +148,7 @@ function renderProjects() {
   }
 
   visibleProjects.forEach((project) => {
-    const card = document.createElement("article");
-    card.className = "card";
-
-    const badges = project.tech
-      .map((item) => `<span class="badge">${item}</span>`)
-      .join("");
-
-    const demoButton = project.demoUrl
-      ? `<a class="btn" href="${project.demoUrl}" target="_blank" rel="noopener noreferrer">Live Demo</a>`
-      : "";
-
-    card.innerHTML = `
-      <h3>${project.title}</h3>
-      <p>${project.description}</p>
-      <div class="badges">${badges}</div>
-      <div class="card-actions">
-        <a class="btn btn-primary" href="${project.githubUrl}" target="_blank" rel="noopener noreferrer">GitHub</a>
-        ${demoButton}
-      </div>
-    `;
-
-    projectsGrid.appendChild(card);
+    projectsGrid.appendChild(createProjectCard(project));
   });
 }
 
@@ -127,6 +157,6 @@ function setCurrentYear() {
   yearElement.textContent = new Date().getFullYear();
 }
 
-createFilterButtons();
-renderProjects();
+createFilterButtons(projects);
+renderProjects(projects);
 setCurrentYear();
