@@ -75,6 +75,7 @@ const ALL_CATEGORY_LABEL = "All";
 let activeCategory = ALL_CATEGORY_LABEL;
 
 const filterBar = document.getElementById("filterBar");
+const featuredProjectsGrid = document.getElementById("featuredProjectsGrid");
 const projectsGrid = document.getElementById("projectsGrid");
 
 function getCategories(projectList) {
@@ -107,9 +108,10 @@ function createFilterButtons(projectList) {
   });
 }
 
-function createProjectCard(project) {
+function createProjectCard(project, options = {}) {
+  const { emphasized = false } = options;
   const card = document.createElement("article");
-  card.className = "card";
+  card.className = `card ${emphasized ? "card-featured" : ""}`.trim();
 
   const badges = project.techStack
     .map((tech) => `<span class="badge">${tech}</span>`)
@@ -137,6 +139,21 @@ function createProjectCard(project) {
   return card;
 }
 
+function renderFeaturedProjects(projectList) {
+  const featuredProjects = projectList.filter((project) => project.featured === true);
+  featuredProjectsGrid.innerHTML = "";
+
+  if (featuredProjects.length === 0) {
+    featuredProjectsGrid.innerHTML =
+      '<div class="empty-state">No featured projects yet. Mark one with <code>featured: true</code>.</div>';
+    return;
+  }
+
+  featuredProjects.forEach((project) => {
+    featuredProjectsGrid.appendChild(createProjectCard(project, { emphasized: true }));
+  });
+}
+
 function renderProjects(projectList) {
   const visibleProjects = getVisibleProjects(projectList, activeCategory);
   projectsGrid.innerHTML = "";
@@ -158,5 +175,6 @@ function setCurrentYear() {
 }
 
 createFilterButtons(projects);
+renderFeaturedProjects(projects);
 renderProjects(projects);
 setCurrentYear();
