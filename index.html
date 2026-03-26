@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Personal portfolio showcasing GitHub projects."
+    />
+    <title>Portfolio | Developer Projects</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container hero-content">
+        <p class="eyebrow">Personal Portfolio</p>
+        <h1>Your Name</h1>
+        <p class="subtitle">
+          Broadcast &amp; Media Technology Student / Developer
+        </p>
+        <div class="hero-links">
+          <a
+            class="btn btn-primary"
+            href="https://github.com/yourusername"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub Profile</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      <section aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <h2 id="projects-heading">Projects</h2>
+          <p>Selected work across apps, web platforms, APIs, and tools.</p>
+        </div>
+
+        <div class="filter-bar" id="filterBar" aria-label="Project categories"></div>
+
+        <div class="projects-grid" id="projectsGrid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <p>© <span id="year"></span> Your Name. Built for GitHub Pages.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
